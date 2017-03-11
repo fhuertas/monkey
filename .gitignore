@@ -1,0 +1,6 @@
+# build folder
+target
+
+# Idea project files
+.idea
+*.iml
