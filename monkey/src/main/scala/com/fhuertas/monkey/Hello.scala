@@ -1,4 +1,4 @@
-package example
+package com.fhuertas.monkey
 
 object Hello extends Greeting with App {
   println(greeting)

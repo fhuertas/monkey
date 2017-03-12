@@ -1,4 +1,4 @@
-package example
+package com.fhuertas.monkey
 
 import org.scalatest._
 
