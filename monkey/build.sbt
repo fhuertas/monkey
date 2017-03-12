@@ -15,7 +15,8 @@ lazy val root = (project in file(".")).
     libraryDependencies ++= Seq(
       scalaTest % Test,
       "org.scalaz" % s"scalaz-core_$scalaMayorVersion" % s"$scalazVersion",
-      "com.typesafe" % "config" % "1.3.1"
+      "com.typesafe" % "config" % "1.3.1",
+      "org.scalatest" % s"scalatest_$scalaMayorVersion" % "3.0.1"
     )
   )
 
