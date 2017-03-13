@@ -1,5 +1,8 @@
 # Monkey Problem
 
+[![Build Status](https://travis-ci.org/fhuertas/monkey.svg?branch=master)](https://travis-ci.org/fhuertas/monkey)
+[![Coverage Status](https://coveralls.io/repos/github/fhuertas/monkey/badge.svg?branch=feature%2Fstructure)](https://coveralls.io/github/fhuertas/monkey?branch=feature%2Fstructure)
+
 We want to know if African monkeys can be taught about deadlocks. She locates a deep canyon and
 fastens a rope across it, so the monkeys can cross hand-over-hand.
 
