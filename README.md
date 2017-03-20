@@ -1,7 +1,7 @@
 # Monkey Problem
 
 [![Build Status](https://travis-ci.org/fhuertas/monkey.svg?branch=master)](https://travis-ci.org/fhuertas/monkey)
-[![Coverage Status](https://coveralls.io/repos/github/fhuertas/monkey/badge.svg?branch=feature%2Fstructure)](https://coveralls.io/github/fhuertas/monkey?branch=feature%2Fstructure)
+[![Coverage Status](https://coveralls.io/repos/github/fhuertas/monkey/badge.svg?branch=master)](https://coveralls.io/github/fhuertas/monkey?branch=master)
 
 ## English description
 
