@@ -1,13 +1,18 @@
 package com.fhuertas.monkey.orchestration
 
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.{FlatSpec, Matchers, WordSpec}
 
 /**
   * Created by fhuertas on 16/03/17.
   */
-class OrchestrationConfigTest extends FlatSpec with Matchers with OrchestrationConfig {
+class OrchestrationConfigTest extends WordSpec with Matchers with OrchestrationConfig {
 
-  "Configuration" should "be read correctly" in {
-    getNumberOfMonkeys should be(10)
+  "Configuration" should {
+    "read the configuration correctly" in {
+      getNumberOfMonkeys should be(10)
+      getMaxTime should be (10000)
+      getMinTime should be (1250)
+      getTimeFactor should be (500)
+    }
   }
 }

@@ -10,10 +10,12 @@ lazy val root = (project in file(".")).
     name := "Monkey",
     libraryDependencies ++= Seq(
       scalaTest % Test,
+      akkaTest % Test,
       scalaz,
       typesafe_config,
       typesafe_logging,
-      haikunator
+      haikunator,
+      akka
     )
   )
 
