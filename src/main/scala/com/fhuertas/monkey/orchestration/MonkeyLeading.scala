@@ -1,15 +1,15 @@
 package com.fhuertas.monkey.orchestration
 
 import akka.actor.Actor.Receive
-import akka.actor.{Actor, ActorRef, ActorSystem, Props}
+import akka.actor.{Actor, ActorLogging, ActorRef, ActorSystem, Props}
 import com.fhuertas.monkey.messages._
 import com.fhuertas.monkey.models.Monkey
 import com.typesafe.scalalogging.LazyLogging
 import me.atrox.haikunator.HaikunatorBuilder
 
-import scalaz.Reader
+import scalaz.{Reader, State}
 
-class MonkeyLeading(monkeyProps: Props) extends Actor with OrchestrationConfig with LazyLogging {
+class MonkeyLeading(monkeyProps: Props) extends Actor with OrchestrationConfig with ActorLogging {
   //  private def generateName = MonkeyLeading.haikunator.haikunate()
   //  val actorSystem: ActorSystem = ActorSystem("Scheduler-System")
 
@@ -20,11 +20,25 @@ class MonkeyLeading(monkeyProps: Props) extends Actor with OrchestrationConfig w
   //    logger.debug(s"New Monkey in the valley. The name ${monkey.name}")
   //    monkey
   //  }
+
   override def receive: Receive = {
-    case NewMonkeyInTheValley =>
+    case NewMonkeyInTheValley(Some(0)) =>
+      log.info("The simulation has finished")
+    case NewMonkeyInTheValley(None) =>
+      throw new UnsupportedOperationException("Infinite monkeys are not supported yet")
+    case NewMonkeyInTheValley(state) =>
       val monkeyRef = context.actorOf(monkeyProps)
       monkeyRef ! YouAreInTheValley
+      Thread.sleep(generateTime)
+      self ! NewMonkeyInTheValley(newState(state))
   }
+
+  private def newState(state: Option[Int]) = state.map(_-1)
+
+  def generateTime: Int = {
+    scala.util.Random.nextInt(getMaxTime-getMinTime)+getMinTime
+  }
+
 }
 
 object MonkeyLeading {

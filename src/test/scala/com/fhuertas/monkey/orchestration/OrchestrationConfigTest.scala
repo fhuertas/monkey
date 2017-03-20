@@ -9,7 +9,7 @@ class OrchestrationConfigTest extends WordSpec with Matchers with OrchestrationC
 
   "Configuration" should {
     "read the configuration correctly" in {
-      getNumberOfMonkeys should be(10)
+      getNumberOfMonkeys should be(Some(10))
       getMaxTime should be (10000)
       getMinTime should be (1250)
       getTimeFactor should be (500)

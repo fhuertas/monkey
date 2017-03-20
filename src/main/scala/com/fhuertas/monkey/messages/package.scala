@@ -4,6 +4,6 @@ package object messages {
 
   case object YouAreInTheValley
 
-  case object NewMonkeyInTheValley
+  case class NewMonkeyInTheValley(state: Option[Int] = None)
 
 }

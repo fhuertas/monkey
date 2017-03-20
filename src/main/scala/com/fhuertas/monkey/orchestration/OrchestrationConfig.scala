@@ -6,7 +6,7 @@ trait OrchestrationConfig {
 
   import OrchestrationConfig._
 
-  def getNumberOfMonkeys: Int = ConfigComponent.getInt(KEY_NUMBER_MONKEYS, DEFAULT_NUMBER_MONKEYS)
+  def getNumberOfMonkeys: Option[Int] = ConfigComponent.getInt(KEY_NUMBER_MONKEYS)
   def getTimeFactor: Int = ConfigComponent.getInt(KEY_TIME_FACTOR, DEFAULT_TIME_FACTOR)
   def getMaxTime: Int = ConfigComponent.getInt(KEY_MAX_TIME, DEFAULT_MAX_TIME)
   def getMinTime: Int = ConfigComponent.getInt(KEY_MIN_TIME, DEFAULT_MIN_TIME)
