@@ -1,9 +1,10 @@
 package com.fhuertas.monkey.common
 
-import scala.util.Try
 import com.typesafe.config.{Config, ConfigFactory}
 
-object ConfigComponent {
+import scala.util.Try
+
+trait ConfigComponent {
 
   val config: Config = ConfigFactory.load()
 
@@ -18,5 +19,11 @@ object ConfigComponent {
   def getBoolean(key: String): Option[Boolean] = Try(config.getBoolean(key)).toOption
 
   def getBoolean(key: String, default: Boolean): Boolean = getBoolean(key) getOrElse default
+
+}
+
+
+object ConfigComponent {
+  val KEY_MONKEY_ROOT = "monkey"
 
 }
