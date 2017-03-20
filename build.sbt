@@ -1,9 +1,5 @@
 import Dependencies._
 
-val scalazVersion = "7.2.9"
-val scalaMayorVersion = "2.12"
-val scalaMinorVersion = s"$scalaMayorVersion.1"
-
 lazy val root = (project in file(".")).
   settings(
     inThisBuild(List(
@@ -14,8 +10,12 @@ lazy val root = (project in file(".")).
     name := "Monkey",
     libraryDependencies ++= Seq(
       scalaTest % Test,
-      "org.scalaz" % s"scalaz-core_$scalaMayorVersion" % s"$scalazVersion",
-      "com.typesafe" % "config" % "1.3.1"
+      akkaTest % Test,
+      scalaz,
+      typesafe_config,
+      typesafe_logging,
+      haikunator,
+      akka
     )
   )
 
