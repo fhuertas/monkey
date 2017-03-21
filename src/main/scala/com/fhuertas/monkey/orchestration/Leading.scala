@@ -8,7 +8,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 import scalaz.Reader
 
-class MonkeyLeading(monkeyProps: Props) extends Actor with OrchestrationConfig with ActorLogging {
+class Leading(monkeyProps: Props) extends Actor with OrchestrationConfig with ActorLogging {
   override def receive: Receive = {
     case NewMonkeyInTheValley(Some(0)) =>
       log.info("The simulation has finished")
@@ -24,9 +24,9 @@ class MonkeyLeading(monkeyProps: Props) extends Actor with OrchestrationConfig w
   private def newState(state: Option[Int]) = state.map(_ - 1)
 }
 
-object MonkeyLeading {
+object Leading {
   val props = Reader {
-    (actorClass: Class[_]) => Props(classOf[MonkeyLeading], actorClass)
+    (monkeyProps: Props) => Props(classOf[Leading], monkeyProps)
   }
 }
 

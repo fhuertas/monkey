@@ -1,7 +1,7 @@
 package com.fhuertas.monkey.utils
 
 import akka.testkit.TestActorRef
-import com.fhuertas.monkey.orchestration.MonkeyLeading
+import com.fhuertas.monkey.orchestration.Leading$
 import org.scalatest.{Matchers, WordSpec}
 
 class UtilsTest extends WordSpec with Matchers {

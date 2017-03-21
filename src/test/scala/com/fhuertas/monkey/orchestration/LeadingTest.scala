@@ -3,6 +3,7 @@ package com.fhuertas.monkey.orchestration
 import akka.actor.{Actor, ActorRef, ActorSystem, Props}
 import akka.testkit.{ImplicitSender, TestActorRef, TestKit, TestProbe}
 import com.fhuertas.monkey.messages._
+import com.fhuertas.monkey.models.Monkey
 import org.scalatest.{Matchers, WordSpecLike}
 
 import scalaz.Reader
@@ -25,7 +26,7 @@ object MonkeyMock {
 
 }
 
-class MonkeyLeadingTest extends TestKit(ActorSystem("MySpec"))
+class LeadingTest extends TestKit(ActorSystem("MySpec"))
   with ImplicitSender
   with WordSpecLike
   with Matchers {
@@ -34,7 +35,7 @@ class MonkeyLeadingTest extends TestKit(ActorSystem("MySpec"))
   val minTime = 10
   val maxTime = 80
 
-  class MonkeyLeadingMock extends MonkeyLeading(MonkeyMock.props(testerActor.ref)) {
+  class LeadingMock extends Leading(MonkeyMock.props(testerActor.ref)) {
     override def getMaxTime: Int = maxTime
 
     override def getMinTime: Int = minTime
@@ -42,21 +43,27 @@ class MonkeyLeadingTest extends TestKit(ActorSystem("MySpec"))
 
 
   "MonkeyLeading" should {
+    "Received messages" in {
+      val leading = system.actorOf(Leading.props(MonkeyMock.props(testerActor.ref)))
+      leading ! "message"
+
+    }
+
     "Generate at least a monkey" in {
-      val monkeyLeaderActor = TestActorRef[MonkeyLeading](new MonkeyLeadingMock)
+      val monkeyLeaderActor = TestActorRef[Leading](new LeadingMock)
       monkeyLeaderActor ! NewMonkeyInTheValley(Option(1))
       testerActor expectMsg YouAreInTheValley
       testerActor expectNoMsg()
     }
 
     "generate a indeterminate number of monkeys are not supported, not message are sent" in {
-      val monkeyLeaderActor = TestActorRef[MonkeyLeading](new MonkeyLeadingMock)
+      val monkeyLeaderActor = TestActorRef[Leading](new LeadingMock)
       monkeyLeaderActor ! NewMonkeyInTheValley(None)
       testerActor expectNoMsg()
     }
 
     "Generate more than one monkeys and the times are corrects" in {
-      val monkeyLeaderActor = TestActorRef[MonkeyLeading](new MonkeyLeadingMock)
+      val monkeyLeaderActor = TestActorRef[Leading](new LeadingMock)
       val minimumTime = minTime * monkeys
       val maximumTime = maxTime * (monkeys + 1)
 
