@@ -48,5 +48,16 @@ class MonkeyTest extends TestKit(ActorSystem("MySpec")) with ImplicitSender with
       robeTime should be >= monkey.underlyingActor.getClimbingRobeTime.toLong
       totalTime should be >= monkey.underlyingActor.getTotalTime.toLong
     }
+
+    "The monkey only should attend to one cross messaging" in {
+      val monkey = TestActorRef[Monkey](new MonkeyMock)
+      monkey ! YouCanCross
+      monkey ! YouCanCross
+      expectMsg(ClimbingRobe)
+      expectMsg(CrossingCanyon)
+      expectMsg(CrossedCanyon)
+      expectNoMsg()
+
+    }
   }
 }
