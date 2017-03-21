@@ -66,15 +66,15 @@ class MonkeyLeadingTest extends TestKit(ActorSystem("MySpec"))
       1 to monkeys foreach { _ => testerActor expectMsg YouAreInTheValley }
       val after = System.currentTimeMillis()
 
-      after - before should be < maximumTime.toLong
-      after - before should be > minimumTime.toLong
+      after - before should be <= maximumTime.toLong
+      after - before should be >= minimumTime.toLong
     }
 
     "generate times correctly, between minimum and maximum" in {
       val monkeyLeaderActor = TestActorRef[MonkeyLeading](new MonkeyLeadingMock)
       val random = monkeyLeaderActor.underlyingActor.generateTime
 
-      random should be < maxTime
+      random should be <= maxTime
       random should be >= minTime
     }
   }
