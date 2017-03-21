@@ -15,4 +15,5 @@ package object models {
       Directions.apply(Random.nextInt(Directions.maxId))
     }
   }
+
 }

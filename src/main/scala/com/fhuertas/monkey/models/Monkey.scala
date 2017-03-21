@@ -4,8 +4,9 @@ import akka.actor.{Actor, ActorLogging, ActorRef, Props}
 import com.fhuertas.monkey.messages.{CrossedCanyon, _}
 import com.fhuertas.monkey.models.Directions._
 import me.atrox.haikunator.{Haikunator, HaikunatorBuilder}
+
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.duration._
 import scalaz.Reader
 
 class Monkey(canyon: ActorRef) extends Actor with ActorLogging with MonkeyConfig {
@@ -23,17 +24,12 @@ class Monkey(canyon: ActorRef) extends Actor with ActorLogging with MonkeyConfig
 
   def waiting: Receive = {
     case YouCanCross =>
-      Future {
-        sender ! ClimbingRobe
-        Thread.sleep(getClimbingRobeTime)
-        sender ! CrossingCanyon
-        //      Thread.sleep(getCrossTime)
-        sender ! CrossedCanyon
-
-      }.isCompleted
+      log.info(logMsg("Crossing the canyon"))
+      sender ! ClimbingRobe
+      context.system.scheduler.scheduleOnce(getClimbingRobeTime milliseconds, sender, CrossingCanyon)
+      context.system.scheduler.scheduleOnce(getTotalTime milliseconds, sender, CrossedCanyon)
     case message => log.info(logMsg(s"I don't understand your message: $message"))
   }
-
 
   private def logMsg(message: String) = s"[$name]: $message"
 }
