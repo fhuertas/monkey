@@ -6,8 +6,9 @@ import com.fhuertas.monkey.messages._
 import com.fhuertas.monkey.models.Monkey
 import com.typesafe.scalalogging.LazyLogging
 import me.atrox.haikunator.HaikunatorBuilder
-
+import scala.concurrent.duration._
 import scalaz.{Reader, State}
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class MonkeyLeading(monkeyProps: Props) extends Actor with OrchestrationConfig with ActorLogging {
   //  private def generateName = MonkeyLeading.haikunator.haikunate()
@@ -29,8 +30,7 @@ class MonkeyLeading(monkeyProps: Props) extends Actor with OrchestrationConfig w
     case NewMonkeyInTheValley(state) =>
       val monkeyRef = context.actorOf(monkeyProps)
       monkeyRef ! YouAreInTheValley
-      Thread.sleep(generateTime)
-      self ! NewMonkeyInTheValley(newState(state))
+      context.system.scheduler.scheduleOnce(generateTime milliseconds,self,NewMonkeyInTheValley(newState(state)))
   }
 
   private def newState(state: Option[Int]) = state.map(_-1)
