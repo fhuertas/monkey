@@ -3,6 +3,7 @@ package com.fhuertas.monkey.models
 import akka.actor.{Actor, ActorLogging, ActorRef, Props}
 import com.fhuertas.monkey.messages.{CrossedCanyon, _}
 import com.fhuertas.monkey.models.Directions._
+import com.fhuertas.monkey.utils.Utils
 import me.atrox.haikunator.{Haikunator, HaikunatorBuilder}
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -21,7 +22,11 @@ class Monkey(val canyon: ActorRef) extends Actor with ActorLogging with MonkeyCo
   override def receive: Receive = waiting
 
   def waiting: Receive = {
-    case YouCanCross =>
+    case CannotCross =>
+      val waitingTime = Utils.generateTime(getWaitingTimeMin,getWaitingTimeMax)
+
+      context.system.scheduler.scheduleOnce(waitingTime milliseconds, sender, CanICross(objective))
+    case CanCross =>
       context.become(crossing)
       log.info(logMsg("Crossing the canyon"))
       sender ! ClimbingRobe
