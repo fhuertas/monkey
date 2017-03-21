@@ -84,5 +84,33 @@ class CanyonIT extends TestKit(ActorSystem("MySpec")) with ImplicitSender with W
       expectMsg(CanCross)
 
     }
+
+    "prevent the starvation" in {
+      val canyon = TestActorRef[Canyon](new Canyon)
+      val wait_time = 100 millis
+
+      canyon ! CanICross(West) // _/1/-----/_/_ Monkey 1
+      expectMsg(CanCross)
+      canyon ! CrossingCanyon // /_/1----/_/_ Monkey 1
+      expectNoMsg(wait_time)
+
+
+      canyon ! CanICross(West) // /2/1----/_/_ Monkey 2
+      expectMsg(CanCross)
+
+      canyon ! CanICross(East) // /2/1----/_/4 Monkey 4
+      expectMsg(CannotCross)
+
+      // Starvation!!
+      canyon ! CrossingCanyon // /_/21---/_/4 Monkey 2
+      expectNoMsg(wait_time)
+
+      // Starvation!!
+      canyon ! CanICross(West) // 3/2/1----/_/_ Monkey 3
+      expectMsg(CannotCross)
+
+
+
+    }
   }
 }
