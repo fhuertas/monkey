@@ -78,10 +78,11 @@ class CanyonIT extends TestKit(ActorSystem("MySpec")) with ImplicitSender with W
       expectNoMsg(wait_time)
 
       canyon ! CrossedCanyon // /_/-----/_/4 Monkey 3
-      expectNoMsg(wait_time)
+      expectMsg(AreYouReady)
 
       canyon ! CanICross(West) // /_/-----/4/_ Monkey 4
       expectMsg(CanCross)
+
 
     }
 
@@ -113,7 +114,7 @@ class CanyonIT extends TestKit(ActorSystem("MySpec")) with ImplicitSender with W
 
       canyon ! CrossedCanyon // 3/_/------/_/4 Monkey 1
       canyon ! CrossedCanyon // 3/_/------/_/4 Monkey 2
-      expectNoMsg(wait_time)
+      expectMsg(AreYouReady)
     }
   }
 }
