@@ -58,13 +58,6 @@ class MonkeyLeadingTest extends TestKit(ActorSystem("MySpec"))
       testerActor expectMsg YouAreInTheValley
       testerActor expectNoMsg()
     }
-    "Generate more than one monkeys" in {
-      val monkeyLeaderActor = TestActorRef[MonkeyLeading](new MonkeyLeadingMock)
-      val monkeys = 3
-      monkeyLeaderActor ! NewMonkeyInTheValley(Option(monkeys))
-      1 to monkeys foreach { _ => testerActor expectMsg YouAreInTheValley }
-      testerActor expectNoMsg()
-    }
 
     "generate a indeterminate number of monkeys are not supported, not message are sent" in {
       val monkeyLeaderActor = TestActorRef[MonkeyLeading](new MonkeyLeadingMock)
@@ -72,16 +65,19 @@ class MonkeyLeadingTest extends TestKit(ActorSystem("MySpec"))
       testerActor expectNoMsg()
     }
 
-    "generate all monkeys between the corrects times" in {
+    "Generate more than one monkeys and the times are corrects" in {
       val monkeyLeaderActor = TestActorRef[MonkeyLeading](new MonkeyLeadingMock)
       val minimumTime = minTime * monkeys
       val maximumTime = maxTime * (monkeys + 1)
-      val before = System.currentTimeMillis()
+
       monkeyLeaderActor ! NewMonkeyInTheValley(Option(monkeys))
+
+      val before = System.currentTimeMillis()
+      1 to monkeys foreach { _ => testerActor expectMsg YouAreInTheValley }
       val after = System.currentTimeMillis()
 
-      before + minimumTime should be < after
-      before + maximumTime should be > after
+      after - before should be < maximumTime.toLong
+      after - before should be > minimumTime.toLong
     }
 
     "generate times correctly, between minimum and maximum" in {
