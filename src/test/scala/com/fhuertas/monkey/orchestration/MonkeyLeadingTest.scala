@@ -2,15 +2,9 @@ package com.fhuertas.monkey.orchestration
 
 import akka.actor.{Actor, ActorRef, ActorSystem, Props}
 import akka.testkit.{ImplicitSender, TestActorRef, TestKit, TestProbe}
-import akka.util.Timeout
 import com.fhuertas.monkey.messages._
-import org.scalatest.concurrent.TimeLimitedTests
-import org.scalatest.time.Span
-import org.scalatest.time.SpanSugar._
 import org.scalatest.{Matchers, WordSpecLike}
-import akka.pattern.ask
 
-import scala.concurrent.{Await, Future}
 import scalaz.Reader
 
 /**
@@ -41,10 +35,6 @@ class MonkeyLeadingTest extends TestKit(ActorSystem("MySpec"))
   val maxTime = 80
 
   class MonkeyLeadingMock extends MonkeyLeading(MonkeyMock.props(testerActor.ref)) {
-    override def getNumberOfMonkeys: Option[Int] = Option(monkeys)
-
-    override def getTimeFactor: Int = 1
-
     override def getMaxTime: Int = maxTime
 
     override def getMinTime: Int = minTime
