@@ -57,5 +57,15 @@ class CanyonTest extends TestKit(ActorSystem("MySpec")) with ImplicitSender with
       expectMsg(CanCross)
       expectNoMsg()
     }
+
+    "free the robe when end to (without free the robe)" in {
+      val canyon = TestActorRef[Canyon](new Canyon)
+      canyon ! CanICross(East)
+      expectMsg(CanCross)
+      canyon ! CrossedCanyon
+      canyon ! CanICross(West)
+      expectMsg(CanCross)
+      expectNoMsg()
+    }
   }
 }
