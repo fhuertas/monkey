@@ -14,7 +14,7 @@ package object messages {
 
   case object CannotCross
 
-  case object IJustCrossed
+  case object AreYouReady
 
   case object ClimbingRobe
 

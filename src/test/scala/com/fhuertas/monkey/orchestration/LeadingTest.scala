@@ -3,9 +3,9 @@ package com.fhuertas.monkey.orchestration
 import akka.actor.{Actor, ActorRef, ActorSystem, Props}
 import akka.testkit.{ImplicitSender, TestActorRef, TestKit, TestProbe}
 import com.fhuertas.monkey.messages._
-import com.fhuertas.monkey.models.Monkey
 import org.scalatest.{Matchers, WordSpecLike}
 
+import scala.concurrent.duration._
 import scalaz.Reader
 
 /**
@@ -30,6 +30,8 @@ class LeadingTest extends TestKit(ActorSystem("MySpec"))
   with ImplicitSender
   with WordSpecLike
   with Matchers {
+
+  val wait_time = 50 millis
   val testerActor = TestProbe()
   val monkeys = 5
   val minTime = 10
@@ -53,13 +55,13 @@ class LeadingTest extends TestKit(ActorSystem("MySpec"))
       val monkeyLeaderActor = TestActorRef[Leading](new LeadingMock)
       monkeyLeaderActor ! NewMonkeyInTheValley(Option(1))
       testerActor expectMsg YouAreInTheValley
-      testerActor expectNoMsg()
+      testerActor expectNoMsg wait_time
     }
 
     "generate a indeterminate number of monkeys are not supported, not message are sent" in {
       val monkeyLeaderActor = TestActorRef[Leading](new LeadingMock)
       monkeyLeaderActor ! NewMonkeyInTheValley(None)
-      testerActor expectNoMsg()
+      testerActor expectNoMsg wait_time
     }
 
     "Generate more than one monkeys and the times are corrects" in {
