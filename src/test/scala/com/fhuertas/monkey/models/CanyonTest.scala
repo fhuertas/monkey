@@ -5,6 +5,7 @@ import akka.testkit.{ImplicitSender, TestActorRef, TestKit}
 import com.fhuertas.monkey.messages._
 import com.fhuertas.monkey.models.Directions._
 import org.scalatest.{Matchers, WordSpecLike}
+
 import scala.concurrent.duration._
 
 class CanyonTest extends TestKit(ActorSystem("MySpec")) with ImplicitSender with WordSpecLike with Matchers {
@@ -80,6 +81,31 @@ class CanyonTest extends TestKit(ActorSystem("MySpec")) with ImplicitSender with
       canyon ! CanICross(West)
       expectMsg(CanCross)
       expectNoMsg(wait_time)
+    }
+
+    "starvation when climbing the robe" in {
+      val canyon = TestActorRef[Canyon](new Canyon)
+      canyon ! CanICross(West)
+      expectMsg(CanCross)
+      canyon ! CanICross(East)
+      expectMsg(CannotCross)
+      canyon.underlyingActor.starvationActorRef shouldBe Some(testActor)
+      canyon ! CrossedCanyon
+      expectMsg(AreYouReady)
+      canyon.underlyingActor.starvationActorRef shouldBe None
+    }
+
+    "starvation when there are monkeys in the robe" in {
+      val canyon = TestActorRef[Canyon](new Canyon)
+      canyon ! CanICross(West)
+      expectMsg(CanCross)
+      canyon ! CrossingCanyon
+      canyon ! CanICross(East)
+      expectMsg(CannotCross)
+      canyon.underlyingActor.starvationActorRef shouldBe Some(testActor)
+      canyon ! CrossedCanyon
+      expectMsg(AreYouReady)
+      canyon.underlyingActor.starvationActorRef shouldBe None
     }
   }
 }

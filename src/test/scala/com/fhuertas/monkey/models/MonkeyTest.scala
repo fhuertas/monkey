@@ -5,9 +5,13 @@ import akka.testkit.{ImplicitSender, TestActorRef, TestKit, TestProbe}
 import com.fhuertas.monkey.messages._
 import org.scalatest.{Matchers, WordSpecLike}
 
+import scala.concurrent.duration._
+
 class MonkeyTest extends TestKit(ActorSystem("MySpec")) with ImplicitSender with WordSpecLike with Matchers {
 
   val canyonTester = TestProbe()
+
+  val wait_time = 50 millis
 
   class MonkeyMock extends Monkey(canyonTester.ref) {
     override def getCrossTime: Int = 100
@@ -46,7 +50,7 @@ class MonkeyTest extends TestKit(ActorSystem("MySpec")) with ImplicitSender with
       val afterClimbRobe = System.currentTimeMillis()
       expectMsg(CrossedCanyon)
       val afterCross = System.currentTimeMillis()
-      expectNoMsg()
+      expectNoMsg(wait_time)
       val robeTime = afterClimbRobe - beforeClimbRobe
       val totalTime = afterCross - beforeClimbRobe
       robeTime should be >= monkey.underlyingActor.getClimbingRobeTime.toLong
@@ -60,7 +64,7 @@ class MonkeyTest extends TestKit(ActorSystem("MySpec")) with ImplicitSender with
       expectMsg(ClimbingRobe)
       expectMsg(CrossingCanyon)
       expectMsg(CrossedCanyon)
-      expectNoMsg()
+      expectNoMsg(wait_time)
 
     }
     "if cannot cross, try again after a while" in {
