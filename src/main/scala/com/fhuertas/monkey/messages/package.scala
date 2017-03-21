@@ -10,7 +10,9 @@ package object messages {
 
   case class CanICross(direction: Direction)
 
-  case object YouCanCross
+  case object CanCross
+
+  case object CannotCross
 
   case object IJustCrossed
 

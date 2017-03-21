@@ -13,6 +13,10 @@ class MonkeyTest extends TestKit(ActorSystem("MySpec")) with ImplicitSender with
     override def getCrossTime: Int = 100
 
     override def getClimbingRobeTime: Int = 50
+
+    override def getWaitingTimeMin: Int = 10
+
+    override def getWaitingTimeMax: Int = 22
   }
 
 
@@ -35,7 +39,7 @@ class MonkeyTest extends TestKit(ActorSystem("MySpec")) with ImplicitSender with
 
     "cross the canyon when receive a message that can receive and report the steps with the correct times" in {
       val monkey = TestActorRef[Monkey](new MonkeyMock)
-      monkey ! YouCanCross
+      monkey ! CanCross
       expectMsg(ClimbingRobe)
       val beforeClimbRobe = System.currentTimeMillis()
       expectMsg(CrossingCanyon)
@@ -51,13 +55,21 @@ class MonkeyTest extends TestKit(ActorSystem("MySpec")) with ImplicitSender with
 
     "The monkey only should attend to one cross messaging" in {
       val monkey = TestActorRef[Monkey](new MonkeyMock)
-      monkey ! YouCanCross
-      monkey ! YouCanCross
+      monkey ! CanCross
+      monkey ! CanCross
       expectMsg(ClimbingRobe)
       expectMsg(CrossingCanyon)
       expectMsg(CrossedCanyon)
       expectNoMsg()
 
+    }
+    "if cannot cross, try again after a while" in {
+      val monkey = TestActorRef[Monkey](new MonkeyMock)
+      val before1 = System.currentTimeMillis()
+      monkey ! CannotCross
+      expectMsg(CanICross(monkey.underlyingActor.objective))
+      val after = System.currentTimeMillis()
+      after - before1 should be >= monkey.underlyingActor.getWaitingTimeMin.toLong
     }
   }
 }

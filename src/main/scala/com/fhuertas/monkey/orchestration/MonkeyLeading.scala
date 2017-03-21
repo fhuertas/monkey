@@ -2,6 +2,7 @@ package com.fhuertas.monkey.orchestration
 
 import akka.actor.{Actor, ActorLogging, Props}
 import com.fhuertas.monkey.messages._
+import com.fhuertas.monkey.utils.Utils
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
@@ -16,15 +17,11 @@ class MonkeyLeading(monkeyProps: Props) extends Actor with OrchestrationConfig w
     case NewMonkeyInTheValley(state) =>
       val monkeyRef = context.actorOf(monkeyProps)
       monkeyRef ! YouAreInTheValley
-      context.system.scheduler.scheduleOnce(generateTime milliseconds, self, NewMonkeyInTheValley(newState(state)))
+      context.system.scheduler.scheduleOnce(
+        Utils.generateTime(getMinTime,getMaxTime) milliseconds, self, NewMonkeyInTheValley(newState(state)))
   }
 
   private def newState(state: Option[Int]) = state.map(_ - 1)
-
-  def generateTime: Int = {
-    scala.util.Random.nextInt(getMaxTime - getMinTime) + getMinTime + 1
-  }
-
 }
 
 object MonkeyLeading {
