@@ -44,9 +44,9 @@ class MonkeyTest extends TestKit(ActorSystem("MySpec")) with ImplicitSender with
       val afterCross = System.currentTimeMillis()
       expectNoMsg()
       val robeTime = afterClimbRobe - beforeClimbRobe
-      val crossTime = afterCross - afterClimbRobe
+      val totalTime = afterCross - beforeClimbRobe
       robeTime should be >= monkey.underlyingActor.getClimbingRobeTime.toLong
-      crossTime should be >= monkey.underlyingActor.getCrossTime.toLong
+      totalTime should be >= monkey.underlyingActor.getTotalTime.toLong
     }
   }
 }

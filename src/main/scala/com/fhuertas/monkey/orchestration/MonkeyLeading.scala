@@ -22,7 +22,7 @@ class MonkeyLeading(monkeyProps: Props) extends Actor with OrchestrationConfig w
   private def newState(state: Option[Int]) = state.map(_ - 1)
 
   def generateTime: Int = {
-    scala.util.Random.nextInt(getMaxTime - getMinTime) + getMinTime
+    scala.util.Random.nextInt(getMaxTime - getMinTime) + getMinTime + 1
   }
 
 }
