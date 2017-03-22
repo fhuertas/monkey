@@ -13,19 +13,19 @@ class Canyon extends Actor with ActorLogging {
   // starvation condition partial function
   private def starvationCondition: Receive = {
     case _ if starvationActorRef.isDefined =>
-      log.info(logMsg(s"At least a monkey has starvation. You should wait"))
+      log.debug(logMsg(s"At least a monkey has starvation. You should wait"))
       sender ! CannotCross
   }
 
   // starvation detection partial function
   private def cannotCrossAndDetectStarvation(direction: Direction): Receive = {
     case CanICross(newDirection) if newDirection != direction =>
-      log.info(
+      log.debug(
         logMsg(s"You cannot cross to $newDirection because there are monkeys in the other direction"))
       starvationActorRef = Option(sender)
       sender ! CannotCross
     case CanICross(newDirection) =>
-      log.info(
+      log.debug(
         logMsg(s"You cannot cross to $newDirection. "))
       sender ! CannotCross
   }
@@ -46,11 +46,11 @@ class Canyon extends Actor with ActorLogging {
 
   private def climbingRobeOtherMonkeys(direction: Direction, numMonkeys: Int): Receive = {
     case CrossingCanyon =>
-      log.info(logMsg(s"You are now in the robe to cross to $direction, Be aware"))
+      log.debug(logMsg(s"You are now in the robe to cross to $direction, Be aware"))
       context.become(receiveCrossing(direction, numMonkeys))
     case CrossedCanyon if numMonkeys > 1 =>
       val monkeysInTheRobe = decrementMonkeys(numMonkeys)
-      log.info(logMsg(s"Congratulation. A monkey is in the other side ($direction). " +
+      log.debug(logMsg(s"Congratulation. A monkey is in the other side ($direction). " +
         s"There are ($monkeysInTheRobe) monkeys in the robe"))
       context.become(receiveClimbingRobe(direction, monkeysInTheRobe))
   }
@@ -74,7 +74,7 @@ class Canyon extends Actor with ActorLogging {
   private def crossing(direction: Direction, numMonkeys: Int): Receive = {
     case CanICross(newDirection) if direction.equals(newDirection) && starvationActorRef.isEmpty =>
       val monkeysInTheRobe = incrementMonkeys(numMonkeys)
-      log.info(logMsg(s"You can cross to $newDirection, but the robe is being ($monkeysInTheRobe) used. Be aware"))
+      log.debug(logMsg(s"You can cross to $newDirection, but the robe is being ($monkeysInTheRobe) used. Be aware"))
       context.become(receiveClimbingRobe(direction, monkeysInTheRobe))
       sender ! CanCross
     case CrossedCanyon if numMonkeys > 1 =>
