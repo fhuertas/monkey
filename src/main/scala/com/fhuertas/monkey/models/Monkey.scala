@@ -34,13 +34,23 @@ class Monkey(val canyon: ActorRef) extends Actor with ActorLogging with MonkeyCo
       log.info(logMsg("Crossing the canyon"))
       canyon ! ClimbingRobe
       context.system.scheduler.scheduleOnce(getClimbingRobeTime milliseconds, canyon, CrossingCanyon)
+      context.system.scheduler.scheduleOnce(getTotalTime milliseconds, self, CrossedCanyon)
       context.system.scheduler.scheduleOnce(getTotalTime milliseconds, canyon, CrossedCanyon)
     case message => log.info(logMsg(s"I don't understand your message: $message"))
   }
 
   def crossing: Receive = {
+    case CrossedCanyon =>
+      context.become(crossed)
+      log.info(logMsg(s"I just cross. I'm in $objective"))
     case _ =>
       log.info(logMsg("I don't hear you because I'm crossing the canyon"))
+  }
+
+  def crossed: Receive = {
+    case _ =>
+      log.info(logMsg("I have cross the canyon"))
+      sender ! CrossedCanyon
   }
 
   private def logMsg(message: String) = s"[$name]: $message"
