@@ -1,0 +1,21 @@
+<configuration>
+
+    <conversionRule conversionWord="coloredLevel" converterClass="play.api.libs.logback.ColoredLevel" />
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%-5level] [%-20logger{0}] - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="ASYNCSTDOUT" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="STDOUT" />
+    </appender>
+
+    <logger name="com.fhuertas.monkey" level="INFO" />
+
+    <root level="OFF">
+        <appender-ref ref="ASYNCSTDOUT" />
+    </root>
+
+</configuration>
