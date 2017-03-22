@@ -6,6 +6,7 @@ import com.fhuertas.monkey.utils.Utils
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
+import scala.language.postfixOps
 import scalaz.Reader
 
 class Leading(monkeyProps: Props) extends Actor with OrchestrationConfig with ActorLogging {
@@ -18,7 +19,7 @@ class Leading(monkeyProps: Props) extends Actor with OrchestrationConfig with Ac
       val monkeyRef = context.actorOf(monkeyProps)
       monkeyRef ! YouAreInTheValley
       context.system.scheduler.scheduleOnce(
-        Utils.generateTime(getMinTime,getMaxTime) milliseconds, self, NewMonkeyInTheValley(newState(state)))
+        Utils.generateTime(getMinTime, getMaxTime) milliseconds, self, NewMonkeyInTheValley(newState(state)))
   }
 
   private def newState(state: Option[Int]) = state.map(_ - 1)
