@@ -86,5 +86,16 @@ class MonkeyTest extends TestKit(ActorSystem("MySpec")) with ImplicitSender with
       monkey ! AreYouReady
       canyonTester expectMsg CanICross(direction)
     }
+    "change to crossed state when it has crossed" in {
+      val monkey = TestActorRef[Monkey](new MonkeyMock)
+      canyonTester expectMsgAllClassOf classOf[CanICross]
+      monkey ! CanCross
+      canyonTester expectMsgAllOf(ClimbingRobe,CrossingCanyon,CrossedCanyon)
+
+      monkey ! "A message"
+//
+      expectMsg(CrossedCanyon)
+
+    }
   }
 }
