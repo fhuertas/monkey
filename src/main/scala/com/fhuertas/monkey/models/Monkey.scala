@@ -5,6 +5,7 @@ import com.fhuertas.monkey.messages.{CrossedCanyon, _}
 import com.fhuertas.monkey.models.Directions._
 import com.fhuertas.monkey.utils.Utils
 import me.atrox.haikunator.{Haikunator, HaikunatorBuilder}
+import scala.language.postfixOps
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
