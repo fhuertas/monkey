@@ -47,12 +47,12 @@ class Canyon extends Actor with LazyLogging {
 
   private def climbingRobeOtherMonkeys(direction: Direction, numMonkeys: Int): Receive = {
     case CrossingCanyon =>
-      logger.info(logMsg(s"You are now in the robe to cross to $direction, Be aware"))
+      logger.info(logMsg(s"You are now in the robe to cross to $direction, Be aware. Monkeys = $numMonkeys"))
       context.become(receiveCrossing(direction, numMonkeys))
     case CrossedCanyon if numMonkeys > 1 =>
       val monkeysInTheRobe = decrementMonkeys(numMonkeys)
       logger.info(logMsg(s"Congratulation. A monkey is in the other side ($direction). " +
-        s"There are ($monkeysInTheRobe) monkeys in the robe"))
+        s"There are monkeys in the robe. Monkeys = $monkeysInTheRobe"))
       context.become(receiveClimbingRobe(direction, monkeysInTheRobe))
   }
 
@@ -75,13 +75,13 @@ class Canyon extends Actor with LazyLogging {
   private def crossing(direction: Direction, numMonkeys: Int): Receive = {
     case CanICross(newDirection) if direction.equals(newDirection) && starvationActorRef.isEmpty =>
       val monkeysInTheRobe = incrementMonkeys(numMonkeys)
-      logger.info(logMsg(s"You can cross to $newDirection, but the robe is being ($monkeysInTheRobe) used. Be aware"))
+      logger.info(logMsg(s"You can cross to $newDirection, but the robe is being used. Be aware. Monkeys = $numMonkeys"))
       context.become(receiveClimbingRobe(direction, monkeysInTheRobe))
       sender ! CanCross
     case CrossedCanyon if numMonkeys > 1 =>
       val monkeysInTheRobe = decrementMonkeys(numMonkeys)
-      logger.info(logMsg(s"Congratulation. A monkey is in the other side ($direction). There are ($monkeysInTheRobe) monkeys " +
-        s"in the robe"))
+      logger.info(logMsg(s"Congratulation. A monkey is in the other side ($direction). " +
+        s"There are monkeys in the robe. Monkeys = $monkeysInTheRobe"))
       context.become(receiveCrossing(direction, monkeysInTheRobe))
   }
 

@@ -2,35 +2,43 @@ package com.fhuertas.monkey.orchestration
 
 import akka.actor.{Actor, ActorLogging, ActorRef, Props}
 import com.fhuertas.monkey.messages._
+import com.fhuertas.monkey.models.Canyon
 import com.fhuertas.monkey.utils.Utils
+import com.typesafe.scalalogging.LazyLogging
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 import scala.language.postfixOps
 import scalaz.Reader
 
-class Leading(monkeyProps: Props) extends Actor with OrchestrationConfig with ActorLogging {
+class Leading(canyonProps: Props, monkeyClass: Class[_]) extends Actor with OrchestrationConfig with LazyLogging {
 
   var monkeysInTheCanyon = Seq.empty[ActorRef]
 
+  val canyon: ActorRef = context.actorOf(canyonProps)
+
   override def receive: Receive = {
     case NewMonkeyInTheValley(Some(0)) =>
-      log.info("The simulation has finished")
+      logger.info("AllMonkeysAreInTheCanyon")
     case NewMonkeyInTheValley(None) =>
-      log.error("Infinite monkeys are not supported yet")
+      logger.error("Infinite monkeys are not supported yet")
     case NewMonkeyInTheValley(state) =>
-      val monkeyRef = context.actorOf(monkeyProps)
+      logger.info(s"Leading: New monkey in the valley. Monkeys left = ${state.get}")
+      monkeysInTheCanyon = monkeysInTheCanyon :+ context.actorOf(Props(monkeyClass,canyon))
       context.system.scheduler.scheduleOnce(
         Utils.generateTime(getMinTime, getMaxTime) milliseconds,
         self, NewMonkeyInTheValley(newState(state)))
   }
+
+  val a: (Int, Int) = (1, 2)
 
   private def newState(state: Option[Int]) = state.map(_ - 1)
 }
 
 object Leading {
   val props = Reader {
-    (monkeyProps: Props) => Props(classOf[Leading], monkeyProps)
+    (canyonAndMonkey: (Props,Class[_])) => Props(classOf[Leading], canyonAndMonkey._1, canyonAndMonkey._2)
+
   }
 }
 
