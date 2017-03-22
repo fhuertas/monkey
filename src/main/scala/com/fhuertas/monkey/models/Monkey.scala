@@ -22,16 +22,18 @@ class Monkey(val canyon: ActorRef) extends Actor with ActorLogging with MonkeyCo
   override def receive: Receive = waiting
 
   def waiting: Receive = {
+    case AreYouReady =>
+      log.info(logMsg("I was waiting but now, I'm ready to cross"))
+      canyon ! CanICross(objective)
     case CannotCross =>
       val waitingTime = Utils.generateTime(getWaitingTimeMin,getWaitingTimeMax)
-
-      context.system.scheduler.scheduleOnce(waitingTime milliseconds, sender, CanICross(objective))
+      context.system.scheduler.scheduleOnce(waitingTime milliseconds, canyon, CanICross(objective))
     case CanCross =>
       context.become(crossing)
       log.info(logMsg("Crossing the canyon"))
-      sender ! ClimbingRobe
-      context.system.scheduler.scheduleOnce(getClimbingRobeTime milliseconds, sender, CrossingCanyon)
-      context.system.scheduler.scheduleOnce(getTotalTime milliseconds, sender, CrossedCanyon)
+      canyon ! ClimbingRobe
+      context.system.scheduler.scheduleOnce(getClimbingRobeTime milliseconds, canyon, CrossingCanyon)
+      context.system.scheduler.scheduleOnce(getTotalTime milliseconds, canyon, CrossedCanyon)
     case message => log.info(logMsg(s"I don't understand your message: $message"))
   }
 

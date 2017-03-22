@@ -43,14 +43,15 @@ class MonkeyTest extends TestKit(ActorSystem("MySpec")) with ImplicitSender with
 
     "cross the canyon when receive a message that can receive and report the steps with the correct times" in {
       val monkey = TestActorRef[Monkey](new MonkeyMock)
+      canyonTester expectMsgAllClassOf classOf[CanICross]
       monkey ! CanCross
-      expectMsg(ClimbingRobe)
+      canyonTester expectMsg ClimbingRobe
       val beforeClimbRobe = System.currentTimeMillis()
-      expectMsg(CrossingCanyon)
+      canyonTester expectMsg CrossingCanyon
       val afterClimbRobe = System.currentTimeMillis()
-      expectMsg(CrossedCanyon)
+      canyonTester expectMsg CrossedCanyon
       val afterCross = System.currentTimeMillis()
-      expectNoMsg(wait_time)
+      canyonTester expectNoMsg wait_time
       val robeTime = afterClimbRobe - beforeClimbRobe
       val totalTime = afterCross - beforeClimbRobe
       robeTime should be >= monkey.underlyingActor.getClimbingRobeTime.toLong
@@ -59,21 +60,31 @@ class MonkeyTest extends TestKit(ActorSystem("MySpec")) with ImplicitSender with
 
     "The monkey only should attend to one cross messaging" in {
       val monkey = TestActorRef[Monkey](new MonkeyMock)
+      canyonTester expectMsgAllClassOf classOf[CanICross]
       monkey ! CanCross
       monkey ! CanCross
-      expectMsg(ClimbingRobe)
-      expectMsg(CrossingCanyon)
-      expectMsg(CrossedCanyon)
-      expectNoMsg(wait_time)
-
+      canyonTester expectMsg ClimbingRobe
+      canyonTester expectMsg CrossingCanyon
+      canyonTester expectMsg CrossedCanyon
+      canyonTester expectNoMsg wait_time
     }
     "if cannot cross, try again after a while" in {
       val monkey = TestActorRef[Monkey](new MonkeyMock)
+      canyonTester expectMsgAllClassOf classOf[CanICross]
       val before1 = System.currentTimeMillis()
       monkey ! CannotCross
-      expectMsg(CanICross(monkey.underlyingActor.objective))
+      canyonTester expectMsg CanICross(monkey.underlyingActor.objective)
       val after = System.currentTimeMillis()
       after - before1 should be >= monkey.underlyingActor.getWaitingTimeMin.toLong
+    }
+
+    "send a CanICross message after receive AreYouReady where it is waiting" in {
+      val monkey = TestActorRef[Monkey](new MonkeyMock)
+      val timeout = 5 millis
+      val direction = monkey.underlyingActor.objective
+      canyonTester expectMsgAllClassOf classOf[CanICross]
+      monkey ! AreYouReady
+      canyonTester expectMsg CanICross(direction)
     }
   }
 }
