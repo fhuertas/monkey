@@ -52,24 +52,24 @@ class LeadingTest extends TestKit(ActorSystem("MySpec"))
     }
 
     "Generate at least a monkey" in {
-      val monkeyLeaderActor = TestActorRef[Leading](new LeadingMock)
-      monkeyLeaderActor ! NewMonkeyInTheValley(Option(1))
+      val leaderActor = TestActorRef[Leading](new LeadingMock)
+      leaderActor ! NewMonkeyInTheValley(Option(1))
       testerActor expectMsg YouAreInTheValley
       testerActor expectNoMsg wait_time
     }
 
     "generate a indeterminate number of monkeys are not supported, not message are sent" in {
-      val monkeyLeaderActor = TestActorRef[Leading](new LeadingMock)
-      monkeyLeaderActor ! NewMonkeyInTheValley(None)
+      val leaderActor = TestActorRef[Leading](new LeadingMock)
+      leaderActor.underlyingActor.monkeysInTheCanyon.size shouldBe 1
       testerActor expectNoMsg wait_time
     }
 
     "Generate more than one monkeys and the times are corrects" in {
-      val monkeyLeaderActor = TestActorRef[Leading](new LeadingMock)
+      val leaderActor = TestActorRef[Leading](new LeadingMock)
       val minimumTime = minTime * monkeys
       val maximumTime = maxTime * (monkeys + 1)
 
-      monkeyLeaderActor ! NewMonkeyInTheValley(Option(monkeys))
+      leaderActor ! NewMonkeyInTheValley(Option(monkeys))
 
       val before = System.currentTimeMillis()
       1 to monkeys foreach { _ => testerActor expectMsg YouAreInTheValley }
