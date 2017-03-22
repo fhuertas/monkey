@@ -15,7 +15,7 @@ lazy val root = (project in file(".")).
       typesafe_config,
       typesafe_logging,
       haikunator,
+      logback,
       akka
     )
   )
-

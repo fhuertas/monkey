@@ -24,4 +24,6 @@ package object messages {
 
   case object WhereAreYou
 
+  case object IHaveCrossed
+
 }

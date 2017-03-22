@@ -4,7 +4,7 @@
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%coloredLevel %logger{15} - %message%n%xException{10}</pattern>
+            <pattern>%d{HH:mm:ss.SSS} [%-5level] [%-20logger{0}] - %msg%n</pattern>
         </encoder>
     </appender>
 
@@ -12,12 +12,9 @@
         <appender-ref ref="STDOUT" />
     </appender>
 
-    <logger name="play" level="INFO" />
-    <logger name="application" level="INFO" />
+    <logger name="com.fhuertas.monkey" level="INFO" />
 
-    <logger name="com.gargoylesoftware.htmlunit.javascript" level="OFF" />
-
-    <root level="DEBUG">
+    <root level="OFF">
         <appender-ref ref="ASYNCSTDOUT" />
     </root>
 

@@ -25,5 +25,4 @@ object MonkeyConfig {
   val KEY_MAX_WAITING = s"${ConfigComponent.KEY_MONKEY_ROOT}.waiting_max"
   val DEFAULT_MIN_WAITING = 100
   val DEFAULT_MAX_WAITING = 200
-
 }

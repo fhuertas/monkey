@@ -51,7 +51,7 @@ class CanyonMonkeyIT extends TestKit(ActorSystem("MySpec"))
       for {
         monkey <- monkeys
       } yield monkey ! WhereAreYou
-      expectMsg(CrossedCanyon)
+      expectMsg(IHaveCrossed)
     }
   }
 }
