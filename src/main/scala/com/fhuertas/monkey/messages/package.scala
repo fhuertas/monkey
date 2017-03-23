@@ -8,6 +8,8 @@ package object messages {
 
   case class CanICross(direction: Direction)
 
+  case object StartSimulation
+
   case object CanCross
 
   case object CannotCross

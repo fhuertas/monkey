@@ -17,9 +17,17 @@ class Leading(canyonProps: Props, monkeyClass: Class[_]) extends Actor with Orch
 
   val canyon: ActorRef = context.actorOf(canyonProps)
 
-  override def receive: Receive = {
+  def waiting: Receive = {
+    case StartSimulation =>
+      context.become(simulating)
+      self ! NewMonkeyInTheValley(Option(getNumMonkeys))
+
+  }
+
+  def simulating: Receive = {
     case NewMonkeyInTheValley(Some(0)) =>
       logger.info("AllMonkeysAreInTheCanyon")
+      context.system.terminate()
     case NewMonkeyInTheValley(None) =>
       logger.error("Infinite monkeys are not supported yet")
     case NewMonkeyInTheValley(state) =>
@@ -29,6 +37,9 @@ class Leading(canyonProps: Props, monkeyClass: Class[_]) extends Actor with Orch
         Utils.generateTime(getMinTime, getMaxTime) milliseconds,
         self, NewMonkeyInTheValley(newState(state)))
   }
+
+
+  override def receive: Receive = waiting
 
   val a: (Int, Int) = (1, 2)
 

@@ -46,8 +46,6 @@ class LeadingIT extends TestKit(ActorSystem("MySpec"))
         monkey ! WhereAreYou
         expectMsg(IHaveCrossed)
       })
-
-
     }
   }
 }
