@@ -22,7 +22,7 @@ class CanyonMonkeyIT extends TestKit(ActorSystem("MySpec"))
   "Canyon and Monkey" should {
     "orchestrate" in new FastConfiguration {
       val canyon = TestActorRef(Canyon.props)
-      val monkeys = 1 to getNumMonkeys map(_ => watch(TestActorRef(FastMonkey.props(canyon))))
+      val monkeys = 1 to getNumMonkeys map (_ => watch(TestActorRef(FastMonkey.props(canyon))))
       val maxTime = getNumMonkeys * getMaxTime
       monkeys.foreach(_ => expectMsgClass(classOf[Terminated]))
     }

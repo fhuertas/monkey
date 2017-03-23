@@ -8,11 +8,6 @@ import org.scalatest.{Matchers, WordSpecLike}
 import scala.concurrent.duration._
 import scalaz.Reader
 
-/**
-  * Created by fhuertas on 16/03/17.
-  */
-
-
 case object NewMonkey
 
 class MonkeyMock(testerActor: ActorRef) extends Actor {

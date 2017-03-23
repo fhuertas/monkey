@@ -5,9 +5,6 @@ import com.fhuertas.monkey.orchestration.Leading
 
 import scalaz.Reader
 
-/**
-  * Created by fhuertas on 22/03/17.
-  */
 class FastLeading(canyonProps: Props, monkeyClass: Class[_])
   extends Leading(canyonProps, monkeyClass) with FastConfiguration
 

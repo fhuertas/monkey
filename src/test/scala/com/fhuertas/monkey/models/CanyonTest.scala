@@ -36,9 +36,9 @@ class CanyonTest extends TestKit(ActorSystem("MySpec")) with ImplicitSender with
     "not allow to cross in a direction if other monkey are in the robe" in {
       val canyon = TestActorRef[Canyon](new Canyon)
       val monkey1, monkey2 = TestProbe()
-      monkey1.send(canyon , CanICross(East))
+      monkey1.send(canyon, CanICross(East))
       monkey1 expectMsg CanCross
-      monkey2.send(canyon , CanICross(West))
+      monkey2.send(canyon, CanICross(West))
       monkey2 expectMsg CannotCross
       expectNoMsg(wait_time)
     }

@@ -1,8 +1,7 @@
 package com.fhuertas.monkey.utils
 
 import akka.actor.{ActorRef, Props}
-import com.fhuertas.monkey.models.{CanyonMonkeyIT, Monkey}
-import com.typesafe.config.{Config, ConfigFactory}
+import com.fhuertas.monkey.models.Monkey
 
 import scalaz.Reader
 

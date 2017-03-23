@@ -11,6 +11,7 @@ trait MonkeyConfig extends ConfigComponent {
   def getClimbingRobeTime: Int = getInt(KEY_ROPE_TIME, DEFAULT_ROPE_TIME)
 
   def getWaitingTimeMin: Int = getInt(KEY_MIN_WAITING, DEFAULT_MIN_WAITING)
+
   def getWaitingTimeMax: Int = getInt(KEY_MAX_WAITING, DEFAULT_MAX_WAITING)
 
   def getTotalTime = getCrossTime + getClimbingRobeTime
