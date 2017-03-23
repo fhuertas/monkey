@@ -12,7 +12,7 @@
         <appender-ref ref="STDOUT" />
     </appender>
 
-    <logger name="com.fhuertas.monkey" level="DEBUG" />
+    <logger name="com.fhuertas.monkey" level="INFO" />
 
     <root level="OFF">
         <appender-ref ref="ASYNCSTDOUT" />

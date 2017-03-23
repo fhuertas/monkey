@@ -111,12 +111,13 @@ class CanyonIT extends TestKit(ActorSystem("MySpec")) with ImplicitSender with W
       monkey2.send(canyon , CanICross(West)) // /2/1----/_/_ Monkey 2
       monkey2 expectMsg CanCross
 
+      monkey2.send(canyon , CrossingCanyon) // /_/21---/_/_ Monkey 2
+      monkey2 expectNoMsg wait_time
+
       // Starvation!!
-      monkey4.send(canyon , CanICross(East)) // /2/1----/_/4 Monkey 4
+      monkey4.send(canyon , CanICross(East)) // /_/21----/_/4 Monkey 4
       monkey4 expectMsg CannotCross
 
-      monkey2.send(canyon , CrossingCanyon) // /_/21---/_/4 Monkey 2
-      monkey2 expectNoMsg wait_time
 
       // Starvation!!
       monkey3.send(canyon , CanICross(West)) // 3/_/21----/_/4 Monkey 3
