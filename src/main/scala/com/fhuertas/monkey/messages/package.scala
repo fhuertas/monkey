@@ -20,6 +20,8 @@ package object messages {
 
   case object CrossedCanyon
 
+  case object YouAreInTheOtherSide
+
   case object WhereAreYou
 
   case object IHaveCrossed
