@@ -10,8 +10,8 @@ class OrchestrationConfigTest extends WordSpec with Matchers {
 
   "Configuration" should {
     "read the configuration from the file when exists" in new OrchestrationConfig {
-      getMaxTime should be(10000)
-      getMinTime should be(1250)
+      getMaxTime should be(4000)
+      getMinTime should be(1000)
       getNumMonkeys should be (10)
     }
 

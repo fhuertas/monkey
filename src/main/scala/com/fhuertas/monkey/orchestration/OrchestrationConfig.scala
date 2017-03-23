@@ -16,7 +16,7 @@ object OrchestrationConfig {
   val KEY_MAX_TIME = s"${ConfigComponent.KEY_MONKEY_ROOT}.max_time"
   val KEY_MIN_TIME = s"${ConfigComponent.KEY_MONKEY_ROOT}.min_time"
   val KEY_NUM_MONKEYS = s"${ConfigComponent.KEY_MONKEY_ROOT}.number"
-  val DEFAULT_MAX_TIME = 1000
-  val DEFAULT_MIN_TIME = 8000
+  val DEFAULT_MAX_TIME = 8000
+  val DEFAULT_MIN_TIME = 1000
   val DEFAULT_NUM_MONKEYS = 8
 }

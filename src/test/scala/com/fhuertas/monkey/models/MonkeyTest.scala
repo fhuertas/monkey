@@ -1,8 +1,9 @@
 package com.fhuertas.monkey.models
 
-import akka.actor.ActorSystem
+import akka.actor.{ActorSystem, Terminated}
 import akka.testkit.{ImplicitSender, TestActorRef, TestKit, TestProbe}
 import com.fhuertas.monkey.messages._
+import com.fhuertas.monkey.utils.FastConfiguration
 import org.scalatest.{Matchers, WordSpecLike}
 
 import scala.concurrent.duration._
@@ -13,15 +14,7 @@ class MonkeyTest extends TestKit(ActorSystem("MySpec")) with ImplicitSender with
 
   val wait_time = 50 millis
 
-  class MonkeyMock extends Monkey(canyonTester.ref) {
-    override def getCrossTime: Int = 100
-
-    override def getClimbingRobeTime: Int = 50
-
-    override def getWaitingTimeMin: Int = 10
-
-    override def getWaitingTimeMax: Int = 22
-  }
+  class MonkeyMock extends Monkey(canyonTester.ref) with FastConfiguration
 
 
   "A Monkey" should {
@@ -43,6 +36,9 @@ class MonkeyTest extends TestKit(ActorSystem("MySpec")) with ImplicitSender with
 
     "cross the canyon when receive a message that can receive and report the steps with the correct times" in {
       val monkey = TestActorRef[Monkey](new MonkeyMock)
+      watch(monkey)
+      val originalClimbingRobeTime = monkey.underlyingActor.getClimbingRobeTime.toLong
+      val originalTotalTime = monkey.underlyingActor.getTotalTime.toLong
       canyonTester expectMsgAllClassOf classOf[CanICross]
       monkey ! CanCross
       canyonTester expectMsg ClimbingRobe
@@ -54,20 +50,21 @@ class MonkeyTest extends TestKit(ActorSystem("MySpec")) with ImplicitSender with
       canyonTester expectNoMsg wait_time
       val robeTime = afterClimbRobe - beforeClimbRobe
       val totalTime = afterCross - beforeClimbRobe
-      robeTime should be >= monkey.underlyingActor.getClimbingRobeTime.toLong
-      totalTime should be >= monkey.underlyingActor.getTotalTime.toLong
+      robeTime should be >= originalClimbingRobeTime
+      totalTime should be >= originalTotalTime
     }
 
     "The monkey only should attend to one cross messaging" in {
       val monkey = TestActorRef[Monkey](new MonkeyMock)
       canyonTester expectMsgAllClassOf classOf[CanICross]
+      watch(monkey)
       monkey ! CanCross
       monkey ! CanCross
-      canyonTester expectMsg ClimbingRobe
-      canyonTester expectMsg CrossingCanyon
-      canyonTester expectMsg CrossedCanyon
+      canyonTester expectMsgAllOf(ClimbingRobe,CrossingCanyon,CrossedCanyon)
       canyonTester expectNoMsg wait_time
+      expectMsgClass(classOf[Terminated])
     }
+
     "if cannot cross, try again after a while" in {
       val monkey = TestActorRef[Monkey](new MonkeyMock)
       canyonTester expectMsgAllClassOf classOf[CanICross]
@@ -78,9 +75,8 @@ class MonkeyTest extends TestKit(ActorSystem("MySpec")) with ImplicitSender with
       after - before1 should be >= monkey.underlyingActor.getWaitingTimeMin.toLong
     }
 
-    "send a CanICross message after receive AreYouReady where it is waiting" in {
+    "A terminated message when it finish" in {
       val monkey = TestActorRef[Monkey](new MonkeyMock)
-      val timeout = 5 millis
       val direction = monkey.underlyingActor.objective
       canyonTester expectMsgAllClassOf classOf[CanICross]
       monkey ! AreYouReady
@@ -90,10 +86,8 @@ class MonkeyTest extends TestKit(ActorSystem("MySpec")) with ImplicitSender with
       val monkey = TestActorRef[Monkey](new MonkeyMock)
       canyonTester expectMsgAllClassOf classOf[CanICross]
       monkey ! CanCross
-      canyonTester expectMsgAllOf(ClimbingRobe,CrossingCanyon,CrossedCanyon)
-
-      monkey ! "A message"
-      expectMsg(IHaveCrossed)
+      canyonTester expectMsgAllOf(ClimbingRobe, CrossingCanyon, CrossedCanyon)
+      expectMsgClass(classOf[Terminated])
     }
   }
 }
