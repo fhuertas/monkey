@@ -25,7 +25,7 @@ class LeadingIT extends TestKit(ActorSystem("MySpec"))
   def getNumMonkeys: Int = getInt(OrchestrationConfig.KEY_NUM_MONKEYS).get
 
   "Leading" should {
-    "recreate a scenario with a least 1 monkey" in new TestKit(ActorSystem("MySpec-1")) {
+    "recreate a scenario with a least 1 monkey" in new TestKit(ActorSystem("MySpec")) {
       var monkeys = 0
       val leading = TestActorRef[Leading](new FastLeading(Canyon.props, classOf[FastMonkey]) {
         override def getNumMonkeys: Int = 1
@@ -40,7 +40,8 @@ class LeadingIT extends TestKit(ActorSystem("MySpec"))
       monkeys shouldBe 1
       expectMsgClass(classOf[Terminated])
     }
-    "recreate a scenario with monkeys" in new TestKit(ActorSystem("MySpec-2")) {
+
+    "recreate a scenario with monkeys" in new TestKit(ActorSystem("MySpec")) {
       var monkeys = 0
       val leading = TestActorRef[Leading](new FastLeading(Canyon.props, classOf[FastMonkey]) {
         override def createMonkey: Unit = {
@@ -54,7 +55,7 @@ class LeadingIT extends TestKit(ActorSystem("MySpec"))
       monkeys shouldBe getNumMonkeys
     }
 
-    "with 0 or less monkey there is no simulation" in new TestKit(ActorSystem("MySpec-3")) {
+    "with 0 or less monkey there is no simulation" in new TestKit(ActorSystem("MySpec")) {
       var monkeys = 0
       val leading = TestActorRef[Leading](new FastLeading(Canyon.props, classOf[FastMonkey]) {
         override def getNumMonkeys: Int = 0

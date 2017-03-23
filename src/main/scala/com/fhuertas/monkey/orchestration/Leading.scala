@@ -37,7 +37,7 @@ class Leading(canyonProps: Props, monkeyClass: Class[_]) extends Actor with Orch
     case NewMonkeyInTheValley(Some(_)) =>
       logger.info("are There are 0 or less monkeys? Is this possible?")
       stopThisActor
-    case Terminated(_) =>
+    case _ =>
   }
 
   def createMonkey: Unit = {
@@ -48,6 +48,7 @@ class Leading(canyonProps: Props, monkeyClass: Class[_]) extends Actor with Orch
     case Terminated(_) if context.children.size == 1 =>
       logger.info("The simulation has end")
       stopThisActor
+    case _ =>
   }
 
   def stopThisActor: Unit = {

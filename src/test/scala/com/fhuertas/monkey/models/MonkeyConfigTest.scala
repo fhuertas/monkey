@@ -10,8 +10,8 @@ class MonkeyConfigTest extends WordSpec with Matchers {
 
   "MonkeyConfig" should {
     "read the file when the values exists" in new MonkeyConfig {
-      getCrossTime should be(4250)
-      getClimbingRobeTime should be(950)
+      getCrossTime should be(2000)
+      getClimbingRobeTime should be(500)
       getWaitingTimeMax should be (250)
       getWaitingTimeMin should be (125)
 

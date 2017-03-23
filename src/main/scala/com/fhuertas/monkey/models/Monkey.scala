@@ -46,7 +46,7 @@ class Monkey(val canyon: ActorRef) extends Actor with LazyLogging with MonkeyCon
   def crossing: Receive = {
     case CrossedCanyon =>
       logger.info(logMsg(s"I just cross. I'm in $objective"))
-      context.stop(sender)
+      context.stop(self)
     case _ =>
       logger.info(logMsg("I don't hear you because I'm crossing the canyon"))
   }
