@@ -9,14 +9,11 @@ import org.scalatest.{Matchers, WordSpecLike}
 
 import scala.concurrent.duration._
 
-/**
-  * Created by fhuertas on 22/03/17.
-  */
 class LeadingIT extends TestKit(ActorSystem("MySpec"))
   with ImplicitSender
-    with WordSpecLike
-    with Matchers
-    with FastConfiguration {
+  with WordSpecLike
+  with Matchers
+  with FastConfiguration {
 
   def getMaxTime: Int = getInt(MonkeyConfig.KEY_CROSS_TIME).get +
     getInt(MonkeyConfig.KEY_ROPE_TIME).get +

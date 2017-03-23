@@ -60,7 +60,7 @@ class MonkeyTest extends TestKit(ActorSystem("MySpec")) with ImplicitSender with
       watch(monkey)
       monkey ! CanCross
       monkey ! CanCross
-      canyonTester expectMsgAllOf(ClimbingRobe,CrossingCanyon,CrossedCanyon)
+      canyonTester expectMsgAllOf(ClimbingRobe, CrossingCanyon, CrossedCanyon)
       canyonTester expectNoMsg wait_time
       expectMsgClass(classOf[Terminated])
     }

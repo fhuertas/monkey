@@ -1,6 +1,6 @@
 package com.fhuertas.monkey.models
 
-import akka.actor.{Actor, ActorLogging, ActorRef, Props}
+import akka.actor.{Actor, ActorRef, Props}
 import com.fhuertas.monkey.messages._
 import com.fhuertas.monkey.models.Directions._
 import com.typesafe.scalalogging.LazyLogging
@@ -50,7 +50,7 @@ class Canyon extends Actor with LazyLogging {
       logger.info(logMsg(s"You are now in the robe to cross to $direction, Be aware. Monkeys = ${monkeys.size}"))
       context.become(receiveCrossing(direction, monkeys))
     case CrossedCanyon if monkeys.size > 1 =>
-      val monkeysInTheRobe = decrementMonkeys(monkeys,sender)
+      val monkeysInTheRobe = decrementMonkeys(monkeys, sender)
       logger.info(logMsg(s"Congratulation. A monkey is in the other side ($direction). " +
         s"There are monkeys in the robe. Monkeys = ${monkeysInTheRobe.size}"))
       context.become(receiveClimbingRobe(direction, monkeysInTheRobe))
@@ -75,12 +75,12 @@ class Canyon extends Actor with LazyLogging {
   private def crossing(direction: Direction, monkeys: Set[ActorRef]): Receive = {
     case CanICross(newDirection) if direction.equals(newDirection) && starvationActorRef.isEmpty =>
       logger.debug(logMsg(s"A monkey is trying to cross the canyon to $direction"))
-      val monkeysInTheRobe = incrementMonkeys(monkeys,sender)
+      val monkeysInTheRobe = incrementMonkeys(monkeys, sender)
       logger.info(logMsg(s"You can cross to $newDirection, but the robe is being used. Be aware. Monkeys = ${monkeysInTheRobe.size}"))
       context.become(receiveClimbingRobe(direction, monkeysInTheRobe))
       sender ! CanCross
     case CrossedCanyon if monkeys.size > 1 =>
-      val monkeysInTheRobe = decrementMonkeys(monkeys,sender)
+      val monkeysInTheRobe = decrementMonkeys(monkeys, sender)
       logger.info(logMsg(s"Congratulation. A monkey is in the other side ($direction). " +
         s"There are monkeys in the robe. Monkeys = ${monkeysInTheRobe.size}"))
       context.become(receiveCrossing(direction, monkeysInTheRobe))

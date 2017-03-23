@@ -2,13 +2,15 @@ package com.fhuertas.monkey.orchestration
 
 import com.fhuertas.monkey.common.ConfigComponent
 
-trait OrchestrationConfig extends ConfigComponent{
+trait OrchestrationConfig extends ConfigComponent {
 
   import OrchestrationConfig._
 
   def getMaxTime: Int = getInt(KEY_MAX_TIME, DEFAULT_MAX_TIME)
+
   def getMinTime: Int = getInt(KEY_MIN_TIME, DEFAULT_MIN_TIME)
-  def getNumMonkeys: Int = getInt(KEY_NUM_MONKEYS,DEFAULT_NUM_MONKEYS)
+
+  def getNumMonkeys: Int = getInt(KEY_NUM_MONKEYS, DEFAULT_NUM_MONKEYS)
 }
 
 object OrchestrationConfig {

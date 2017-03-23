@@ -2,9 +2,6 @@ package com.fhuertas.monkey.common
 
 import org.scalatest.{Matchers, WordSpec}
 
-/**
-  * Created by fhuertas on 21/03/17.
-  */
 class ConfigComponentTest extends WordSpec with Matchers {
   "ConfigComponentTest" should {
     "Return values if there are value as default" in new ConfigComponent {
