@@ -91,7 +91,7 @@ class MonkeyTest extends TestKit(ActorSystem("MySpec")) with ImplicitSender with
       canyonTester expectMsgAllClassOf classOf[CanICross]
       monkey ! CanCross
       canyonTester expectMsgAllOf(ClimbingRobe,CrossingCanyon,CrossedCanyon)
-
+      canyonTester.send(monkey,YouAreInTheOtherSide)
       monkey ! "A message"
       expectMsg(IHaveCrossed)
     }

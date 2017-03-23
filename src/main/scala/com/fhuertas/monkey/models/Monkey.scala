@@ -38,13 +38,12 @@ class Monkey(val canyon: ActorRef) extends Actor with LazyLogging with MonkeyCon
       logger.info(logMsg("Taking the robe"))
       canyon ! ClimbingRobe
       context.system.scheduler.scheduleOnce(getClimbingRobeTime milliseconds, canyon, CrossingCanyon)
-      context.system.scheduler.scheduleOnce(getTotalTime milliseconds, self, CrossedCanyon)
       context.system.scheduler.scheduleOnce(getTotalTime milliseconds, canyon, CrossedCanyon)
     case message => logger.info(logMsg(s"I don't understand your message: $message"))
   }
 
   def crossing: Receive = {
-    case CrossedCanyon =>
+    case YouAreInTheOtherSide =>
       context.become(crossed)
       logger.info(logMsg(s"I just cross. I'm in $objective"))
     case _ =>
