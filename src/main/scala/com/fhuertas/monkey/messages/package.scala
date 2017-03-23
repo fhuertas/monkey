@@ -4,8 +4,6 @@ import com.fhuertas.monkey.models.Directions.Direction
 
 package object messages {
 
-  case object YouAreInTheValley
-
   case class NewMonkeyInTheValley(state: Option[Int] = None)
 
   case class CanICross(direction: Direction)
