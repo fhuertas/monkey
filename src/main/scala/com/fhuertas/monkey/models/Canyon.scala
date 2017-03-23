@@ -33,26 +33,26 @@ class Canyon extends Actor with LazyLogging {
 
   private def empty: Receive = {
     case CanICross(direction) =>
-      logger.info(logMsg(s"New monkey in the canyon. It is climbing the robe to $direction"))
-      context.become(receiveClimbingRobe(direction, incrementMonkeys(0)))
+      logger.debug(logMsg(s"A monkey is trying to cross the canyon to $direction"))
+      context.become(receiveClimbingRobe(direction, incrementMonkeys(Set.empty[ActorRef], sender)))
       sender ! CanCross
     case message => logger.debug(logMsg(s"I don't understand you: $message"))
   }
 
-  private def receiveClimbingRobe(direction: Direction, numMonkeys: Int): Receive =
-    climbingRobeOtherMonkeys(direction, numMonkeys) orElse
+  private def receiveClimbingRobe(direction: Direction, monkeys: Set[ActorRef]): Receive =
+    climbingRobeOtherMonkeys(direction, monkeys) orElse
       lastMonkeyCrossingCanyon(direction) orElse
       starvationCondition orElse
       cannotCrossAndDetectStarvation(direction)
 
-  private def climbingRobeOtherMonkeys(direction: Direction, numMonkeys: Int): Receive = {
+  private def climbingRobeOtherMonkeys(direction: Direction, monkeys: Set[ActorRef]): Receive = {
     case CrossingCanyon =>
-      logger.info(logMsg(s"You are now in the robe to cross to $direction, Be aware. Monkeys = $numMonkeys"))
-      context.become(receiveCrossing(direction, numMonkeys))
-    case CrossedCanyon if numMonkeys > 1 =>
-      val monkeysInTheRobe = decrementMonkeys(numMonkeys)
+      logger.info(logMsg(s"You are now in the robe to cross to $direction, Be aware. Monkeys = ${monkeys.size}"))
+      context.become(receiveCrossing(direction, monkeys))
+    case CrossedCanyon if monkeys.size > 1 =>
+      val monkeysInTheRobe = decrementMonkeys(monkeys,sender)
       logger.info(logMsg(s"Congratulation. A monkey is in the other side ($direction). " +
-        s"There are monkeys in the robe. Monkeys = $monkeysInTheRobe"))
+        s"There are monkeys in the robe. Monkeys = ${monkeysInTheRobe.size}"))
       context.become(receiveClimbingRobe(direction, monkeysInTheRobe))
   }
 
@@ -65,31 +65,34 @@ class Canyon extends Actor with LazyLogging {
   }
 
 
-  private def receiveCrossing(direction: Direction, numMonkeys: Int): Receive =
+  private def receiveCrossing(direction: Direction, numMonkeys: Set[ActorRef]): Receive =
     crossing(direction, numMonkeys) orElse
       lastMonkeyCrossingCanyon(direction) orElse
       starvationCondition orElse
       cannotCrossAndDetectStarvation(direction)
 
   // Crossing partial function
-  private def crossing(direction: Direction, numMonkeys: Int): Receive = {
+  private def crossing(direction: Direction, monkeys: Set[ActorRef]): Receive = {
     case CanICross(newDirection) if direction.equals(newDirection) && starvationActorRef.isEmpty =>
-      val monkeysInTheRobe = incrementMonkeys(numMonkeys)
-      logger.info(logMsg(s"You can cross to $newDirection, but the robe is being used. Be aware. Monkeys = $numMonkeys"))
+      logger.debug(logMsg(s"A monkey is trying to cross the canyon to $direction"))
+      val monkeysInTheRobe = incrementMonkeys(monkeys,sender)
+      logger.info(logMsg(s"You can cross to $newDirection, but the robe is being used. Be aware. Monkeys = ${monkeysInTheRobe.size}"))
       context.become(receiveClimbingRobe(direction, monkeysInTheRobe))
       sender ! CanCross
-    case CrossedCanyon if numMonkeys > 1 =>
-      val monkeysInTheRobe = decrementMonkeys(numMonkeys)
+    case CrossedCanyon if monkeys.size > 1 =>
+      val monkeysInTheRobe = decrementMonkeys(monkeys,sender)
       logger.info(logMsg(s"Congratulation. A monkey is in the other side ($direction). " +
-        s"There are monkeys in the robe. Monkeys = $monkeysInTheRobe"))
+        s"There are monkeys in the robe. Monkeys = ${monkeysInTheRobe.size}"))
       context.become(receiveCrossing(direction, monkeysInTheRobe))
   }
 
   private def logMsg(msg: String) = s"<canyon>: $msg"
 
-  private def incrementMonkeys(initialMonkeys: Int) = initialMonkeys + 1
+  private def incrementMonkeys(initialMonkeys: Set[ActorRef], newMonkey: ActorRef) =
+    initialMonkeys + newMonkey
 
-  private def decrementMonkeys(initialMonkeys: Int) = initialMonkeys - 1
+  private def decrementMonkeys(initialMonkeys: Set[ActorRef], monkey: ActorRef) =
+    initialMonkeys - monkey
 }
 
 object Canyon {
