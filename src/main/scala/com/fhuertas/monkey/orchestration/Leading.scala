@@ -1,8 +1,7 @@
 package com.fhuertas.monkey.orchestration
 
-import akka.actor.{Actor, ActorLogging, ActorRef, Props}
+import akka.actor.{Actor, ActorRef, Props, Terminated}
 import com.fhuertas.monkey.messages._
-import com.fhuertas.monkey.models.Canyon
 import com.fhuertas.monkey.utils.Utils
 import com.typesafe.scalalogging.LazyLogging
 
@@ -13,7 +12,7 @@ import scalaz.Reader
 
 class Leading(canyonProps: Props, monkeyClass: Class[_]) extends Actor with OrchestrationConfig with LazyLogging {
 
-  var monkeysInTheCanyon = Seq.empty[ActorRef]
+  var monkeysInTheCanyon = Set.empty[ActorRef]
 
   val canyon: ActorRef = context.actorOf(canyonProps)
 
@@ -25,17 +24,36 @@ class Leading(canyonProps: Props, monkeyClass: Class[_]) extends Actor with Orch
   }
 
   def simulating: Receive = {
-    case NewMonkeyInTheValley(Some(0)) =>
-      logger.info("AllMonkeysAreInTheCanyon")
-      context.system.terminate()
-    case NewMonkeyInTheValley(None) =>
-      logger.error("Infinite monkeys are not supported yet")
-    case NewMonkeyInTheValley(state) =>
+    case NewMonkeyInTheValley(Some(1)) =>
+      logger.info("The last monkey is in the canyon")
+      createMonkey
+      context.become(waitingTheEnd)
+    case NewMonkeyInTheValley(state) if state.get > 1 =>
       logger.info(s"Leading: New monkey in the valley. Monkeys left = ${state.get}")
-      monkeysInTheCanyon = monkeysInTheCanyon :+ context.actorOf(Props(monkeyClass,canyon))
+      createMonkey
       context.system.scheduler.scheduleOnce(
         Utils.generateTime(getMinTime, getMaxTime) milliseconds,
         self, NewMonkeyInTheValley(newState(state)))
+    case NewMonkeyInTheValley(Some(_)) =>
+      logger.info("are There are 0 or less monkeys? Is this possible?")
+      stopThisActor
+    case Terminated(_) =>
+  }
+
+  def createMonkey: Unit = {
+    context.watch(context.actorOf(Props(monkeyClass, canyon)))
+  }
+
+  def waitingTheEnd: Receive = {
+    case Terminated(_) if context.children.size == 1 =>
+      logger.info("The simulation has end")
+      stopThisActor
+  }
+
+  def stopThisActor: Unit = {
+    context.stop(canyon)
+    context.stop(self)
+    context.stop(context.parent)
   }
 
 
@@ -48,7 +66,7 @@ class Leading(canyonProps: Props, monkeyClass: Class[_]) extends Actor with Orch
 
 object Leading {
   val props = Reader {
-    (canyonAndMonkey: (Props,Class[_])) => Props(classOf[Leading], canyonAndMonkey._1, canyonAndMonkey._2)
+    (canyonAndMonkey: (Props, Class[_])) => Props(classOf[Leading], canyonAndMonkey._1, canyonAndMonkey._2)
 
   }
 }
