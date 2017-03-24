@@ -3,7 +3,9 @@
 [![Build Status](https://travis-ci.org/fhuertas/monkey.svg?branch=master)](https://travis-ci.org/fhuertas/monkey)
 [![Coverage Status](https://coveralls.io/repos/github/fhuertas/monkey/badge.svg?branch=master)](https://coveralls.io/github/fhuertas/monkey?branch=master)
 
-## English description
+## Description
+
+### English 
 
 We want to know if African monkeys can be taught about deadlocks. She locates a deep canyon and
 fastens a rope across it, so the monkeys can cross hand-over-hand.
@@ -36,7 +38,7 @@ is on the rope.
 
 Enjoy it!
 
-## Spanish description
+### Spanish
 
 Queremos saber si los monos africanos pueden ser enseñados sobre los deadlocks. Hay un cañón profundo y una cuerda que lo atraviesa (Este - Oeste), por esta cuerda los monios pueden cruzar utilizando sus manos
 
@@ -54,4 +56,40 @@ Para este ejercicio, debe escribir un programa para simular actividad para este 
 - Cada mono tarda en llegar entre 1 y 8 segundos. En conjunto, un montón de monos, lo que quieras, va a cruzar el cañón, con un generador de números aleatorios que especifican si están en movimiento hacia el este o en dirección oeste.
 - Cada mono tarda en subir a la cuerda 1 segundo. 
 - Todos los monos tardan lo mismo en cruzar la cuerda, 4 segundos
+
+## Run a monkey simulation
+
+### Requirements. 
+
+You need have installed sbt in your machine (with its dependencies). 
+
+### Configuration parameters
+
+This simulation uses typesafe config to take the parameters. You can set the configuration file with 
+the flag `-Dconfig.file`. The configuration file by default is application.conf (or reference.conf, if other doesn't
+exist) included in resources folder (src/main/resource). 
+
+The configuration parameters are the following:
+
+* **monkey.waiting_min**: The minimum time (milliseconds) time that a monkey is waiting after it hasn't been 
+allowed to cross. The default value is 200
+* **monkey.waiting_max**: The maximum time (milliseconds) time that a monkey is waiting after it hasn't been 
+allowed to cross. The default value is 100
+* **monkey.number**: The number of monkey. The default by value is 8 
+* **monkey.min_time**: The minimum time (milliseconds) between monkeys. The default value is 8000
+* **monkey.max_time**: The minimum time (milliseconds) between monkeys. The default value is 1000
+* **monkey.cross_time**: The time it takes for a monkey to cross the canyon. The default value is 4000  
+* **monkey.rope_time**: The time it takes for a monkey to climb to robe. The default value is 1000 
+
+### Run simulation
+
+To run the simulation you should download the repository. After it, you should run `sbt run` command, 
+you can add a custom application.conf before run the simulation.
+
+All the options to run the project are the following:
+
+* `sbt run`: Run the simulation.
+* `sbt compile`: Compile the project
+* `sbt test`: Run the tests
+* `sbt clean coverage test && sbt coverageReport`: To test the application and show the coverage
 
