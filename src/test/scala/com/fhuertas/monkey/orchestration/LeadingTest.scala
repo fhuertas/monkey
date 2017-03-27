@@ -85,5 +85,18 @@ class LeadingTest extends TestKit(ActorSystem("MySpec"))
       after - before should be <= maxTime.toLong * 3 // For the latency
       after - before should be >= minTime.toLong
     }
+
+    "not fail when a monkey end and it is not the last monkey" in {
+      val leading = TestActorRef[Leading](Leading.props(CanyonMock.props(testerActor.ref), classOf[MonkeyMock]))
+      leading.underlyingActor.context.become(leading.underlyingActor.waitingTheEnd)
+      val monkey1 = leading.underlyingActor.context.actorOf(MonkeyMock.props(leading.underlyingActor.canyon))
+      val monkey2 = leading.underlyingActor.context.actorOf(MonkeyMock.props(leading.underlyingActor.canyon))
+      val testProbe = TestProbe()
+      testProbe.watch(leading)
+      leading.underlyingActor.context.watch(monkey1)
+      leading.underlyingActor.context.watch(monkey2)
+      leading.underlyingActor.context.stop(monkey1)
+      testProbe expectNoMsg wait_time // No message of terminated
+    }
   }
 }
